@@ -8,6 +8,17 @@ const StoreContextProvider = (props) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+
+  // Check if user is logged in on mount
+  useEffect(() => {
+    const loggedInUser = localStorage.getItem("loggedInUser");
+    if (loggedInUser) {
+      setCurrentUser(JSON.parse(loggedInUser));
+      setIsLoggedIn(true);
+    }
+  }, []);
 
   // Fetch food data from JSON Server
   useEffect(() => {
@@ -95,6 +106,18 @@ const StoreContextProvider = (props) => {
     localStorage.removeItem("cartItems");
   };
 
+  const login = (userData) => {
+    setCurrentUser(userData);
+    setIsLoggedIn(true);
+    localStorage.setItem("loggedInUser", JSON.stringify(userData));
+  };
+
+  const logout = () => {
+    setCurrentUser(null);
+    setIsLoggedIn(false);
+    localStorage.removeItem("loggedInUser");
+  };
+
   const contextValue = {
     food_list,
     loading,
@@ -107,6 +130,10 @@ const StoreContextProvider = (props) => {
     removeFromCart,
     getTotalCart,
     clearCart,
+    isLoggedIn,
+    currentUser,
+    login,
+    logout,
   };
 
   return (

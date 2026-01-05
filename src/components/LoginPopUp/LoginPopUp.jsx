@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useForm } from "react-hook-form";
 import "./LoginPopUp.css";
+import { StoreContext } from "../../context/StoreContext";
 
 function LoginPopUp({ setShowLogin }) {
   const [currState, setCurrState] = useState("Login");
+  const { login } = useContext(StoreContext);
 
   const {
     register,
@@ -18,11 +20,13 @@ function LoginPopUp({ setShowLogin }) {
 
   const onSubmit = (data) => {
     if (currState === "Sign Up") {
+      // Save user data
       localStorage.setItem("userData", JSON.stringify(data));
       alert("Account created successfully! Please login.");
       setCurrState("Login");
       reset();
     } else {
+      // Login
       const savedData = JSON.parse(localStorage.getItem("userData"));
 
       if (!savedData) {
@@ -31,7 +35,14 @@ function LoginPopUp({ setShowLogin }) {
       }
 
       if (data.email === savedData.email && data.password === savedData.password) {
-        alert("Login successful!");
+        // Successful login
+        const userData = {
+          name: savedData.name,
+          email: savedData.email,
+        };
+        
+        login(userData); // Update context
+        alert(`Welcome back, ${savedData.name}!`);
         reset();
         setShowLogin(false);
       } else {

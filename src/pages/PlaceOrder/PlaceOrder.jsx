@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import "./PlaceOrder.css";
 import { StoreContext } from "../../context/StoreContext";
 import { useNavigate } from "react-router-dom";
-import { sendOrderConfirmation } from "../../utils/emailService";
+import { sendOrderConfirmation, isEmailConfigured } from "../../utils/emailService";
 
 function PlaceOrder() {
   const { getTotalCart, clearCart, food_list, cartItems } = useContext(StoreContext);
@@ -33,34 +33,67 @@ function PlaceOrder() {
     
     const { firstName, lastName, email, street, city, state, pincode, country, phone } = formData;
     
+    // Validate all fields
     if (!firstName || !lastName || !email || !street || !city || !state || !pincode || !country || !phone) {
-      alert("Please fill in all fields");
+      alert("❌ Please fill in all fields");
+      return;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      alert("❌ Please enter a valid email address");
+      return;
+    }
+
+    // Phone validation (10 digits)
+    const phoneRegex = /^\d{10}$/;
+    if (!phoneRegex.test(phone)) {
+      alert("❌ Please enter a valid 10-digit phone number");
       return;
     }
 
     setIsSubmitting(true);
 
     // Prepare order data
+    const orderTotal = getTotalCart() + 50;
+    const orderItems = Object.keys(cartItems).map(id => {
+      const item = food_list.find(f => f._id === id);
+      return `${item.name} x${cartItems[id]} = ₹${item.price * cartItems[id]}`;
+    }).join('\n');
+
     const orderData = {
       ...formData,
-      total: getTotalCart() + 50,
-      items: Object.keys(cartItems).map(id => {
-        const item = food_list.find(f => f._id === id);
-        return `${item.name} x${cartItems[id]} (₹${item.price * cartItems[id]})`;
-      }).join('\n'),
+      total: orderTotal,
+      items: orderItems,
     };
 
     try {
-      // Send email
-      await sendOrderConfirmation(orderData);
-      alert("Order placed successfully! Check your email for confirmation.");
+      // Check if email is configured
+      if (isEmailConfigured()) {
+        // Send email confirmation
+        await sendOrderConfirmation(orderData);
+        alert(`✅ Order placed successfully!\n\n💰 Total: ₹${orderTotal}\n📧 Confirmation email sent to ${email}\n\nCheck your inbox!`);
+      } else {
+        // Email not configured - still process order
+        console.warn('⚠️ EmailJS not configured. Skipping email send.');
+        alert(`✅ Order placed successfully!\n\n💰 Total: ₹${orderTotal}\n\n⚠️ Email service not configured.\nPlease contact support for order confirmation.`);
+      }
+      
+      // Clear cart and redirect
       clearCart();
       navigate("/");
+      
     } catch (error) {
       console.error('Order placement error:', error);
-      alert("Order placed but email confirmation failed. We'll contact you soon!");
+      
+      // Order placed but email failed
+      alert(`✅ Order placed successfully!\n\n💰 Total: ₹${orderTotal}\n\n⚠️ Email confirmation failed to send.\nWe'll contact you at ${phone} for confirmation.`);
+      
+      // Still clear cart and redirect
       clearCart();
       navigate("/");
+      
     } finally {
       setIsSubmitting(false);
     }
@@ -78,6 +111,7 @@ function PlaceOrder() {
             value={formData.firstName}
             onChange={handleChange}
             required
+            disabled={isSubmitting}
           />
           <input
             type="text"
@@ -86,6 +120,7 @@ function PlaceOrder() {
             value={formData.lastName}
             onChange={handleChange}
             required
+            disabled={isSubmitting}
           />
         </div>
         <input
@@ -95,6 +130,7 @@ function PlaceOrder() {
           value={formData.email}
           onChange={handleChange}
           required
+          disabled={isSubmitting}
         />
         <input
           type="text"
@@ -103,6 +139,7 @@ function PlaceOrder() {
           value={formData.street}
           onChange={handleChange}
           required
+          disabled={isSubmitting}
         />
         <div className="multi-fields">
           <input
@@ -112,6 +149,7 @@ function PlaceOrder() {
             value={formData.city}
             onChange={handleChange}
             required
+            disabled={isSubmitting}
           />
           <input
             type="text"
@@ -120,6 +158,7 @@ function PlaceOrder() {
             value={formData.state}
             onChange={handleChange}
             required
+            disabled={isSubmitting}
           />
         </div>
         <div className="multi-fields">
@@ -130,6 +169,8 @@ function PlaceOrder() {
             value={formData.pincode}
             onChange={handleChange}
             required
+            disabled={isSubmitting}
+            maxLength="6"
           />
           <input
             type="text"
@@ -138,15 +179,19 @@ function PlaceOrder() {
             value={formData.country}
             onChange={handleChange}
             required
+            disabled={isSubmitting}
           />
         </div>
         <input
           type="tel"
           name="phone"
-          placeholder="Phone"
+          placeholder="Phone (10 digits)"
           value={formData.phone}
           onChange={handleChange}
           required
+          disabled={isSubmitting}
+          maxLength="10"
+          pattern="[0-9]{10}"
         />
       </div>
 
@@ -167,8 +212,14 @@ function PlaceOrder() {
             <b>Total</b>
             <b>₹{getTotalCart() === 0 ? 0 : getTotalCart() + 50}</b>
           </div>
-          <button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "PROCESSING..." : "PROCEED TO PAYMENT"}
+          <button type="submit" disabled={isSubmitting || getTotalCart() === 0}>
+            {isSubmitting ? (
+              <>
+                <span className="spinner"></span> PROCESSING...
+              </>
+            ) : (
+              "PROCEED TO PAYMENT"
+            )}
           </button>
         </div>
       </div>

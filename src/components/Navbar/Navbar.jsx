@@ -5,13 +5,27 @@ import { StoreContext } from "../../context/StoreContext";
 
 const Navbar = ({ setShowLogin }) => {
   const [menu, setMenu] = useState("home");
-  const { getTotalCart } = useContext(StoreContext);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const { getTotalCart, isLoggedIn, currentUser, logout, setSearchTerm } = useContext(StoreContext);
 
   const scrollToSection = (id) => {
     const element = document.getElementById(id);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+  };
+
+  const handleLogout = () => {
+    logout();
+    setShowDropdown(false);
+    alert("Logged out successfully!");
+  };
+
+  const handleSearch = (e) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+    setSearchTerm(value);
   };
 
   return (
@@ -23,7 +37,7 @@ const Navbar = ({ setShowLogin }) => {
         <Link to="/" onClick={() => setMenu("home")} className={menu === "home" ? "active" : ""}>
           Home
         </Link>
-        <a
+        
           href="#about"
           onClick={(e) => {
             e.preventDefault();
@@ -34,7 +48,7 @@ const Navbar = ({ setShowLogin }) => {
         >
           About
         </a>
-        <a
+        
           href="#footer"
           onClick={(e) => {
             e.preventDefault();
@@ -45,7 +59,7 @@ const Navbar = ({ setShowLogin }) => {
         >
           Contact
         </a>
-        <a
+        
           href="#explore-menu"
           onClick={(e) => {
             e.preventDefault();
@@ -58,13 +72,50 @@ const Navbar = ({ setShowLogin }) => {
         </a>
       </ul>
       <div className="navbar-right">
+        {/* Search Bar */}
+        <div className="navbar-search">
+          <input
+            type="text"
+            placeholder="Search food..."
+            value={searchQuery}
+            onChange={handleSearch}
+          />
+          <i className="bi bi-search"></i>
+        </div>
+
         <div className="navbar-search-icon">
           <Link to="/cart">
             <i className="bi bi-cart3"></i>
           </Link>
           <div className={getTotalCart() === 0 ? "" : "dot"}></div>
         </div>
-        <button onClick={() => setShowLogin(true)}>Sign In</button>
+        
+        {isLoggedIn ? (
+          <div 
+            className="navbar-profile"
+            onMouseEnter={() => setShowDropdown(true)}
+            onMouseLeave={() => setShowDropdown(false)}
+          >
+            <div className="navbar-profile-icon">
+              <i className="bi bi-person-circle"></i>
+              <span>{currentUser?.name}</span>
+            </div>
+            {showDropdown && (
+              <div className="navbar-dropdown">
+                <div className="dropdown-item">
+                  <i className="bi bi-person"></i>
+                  <span>{currentUser?.email}</span>
+                </div>
+                <div className="dropdown-item" onClick={handleLogout}>
+                  <i className="bi bi-box-arrow-right"></i>
+                  <span>Logout</span>
+                </div>
+              </div>
+            )}
+          </div>
+        ) : (
+          <button onClick={() => setShowLogin(true)}>Sign In</button>
+        )}
       </div>
     </div>
   );

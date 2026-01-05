@@ -37,7 +37,7 @@ const Navbar = ({ setShowLogin }) => {
         <Link to="/" onClick={() => setMenu("home")} className={menu === "home" ? "active" : ""}>
           Home
         </Link>
-        
+        <a
           href="#about"
           onClick={(e) => {
             e.preventDefault();
@@ -48,7 +48,7 @@ const Navbar = ({ setShowLogin }) => {
         >
           About
         </a>
-        
+        <a
           href="#footer"
           onClick={(e) => {
             e.preventDefault();
@@ -59,7 +59,7 @@ const Navbar = ({ setShowLogin }) => {
         >
           Contact
         </a>
-        
+        <a
           href="#explore-menu"
           onClick={(e) => {
             e.preventDefault();

@@ -109,3 +109,105 @@
     display: none;
   }
 }
+/* Active link styling */
+.navbar-menu a {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding-bottom: 5px;
+  position: relative;
+}
+
+.navbar-menu a::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  left: 50%;
+  background-color: #018790;
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.navbar-menu a:hover::after,
+.navbar-menu a.active::after {
+  width: 100%;
+}
+
+/* Cart icon styling */
+.navbar-search-icon i {
+  font-size: 24px;
+  color: #49557e;
+  transition: all 0.3s ease;
+}
+
+.navbar-search-icon i:hover {
+  color: #018790;
+  transform: scale(1.1);
+}
+
+/* Dot animation */
+.navbar-search-icon .dot {
+  position: absolute;
+  min-height: 10px;
+  min-width: 10px;
+  background-color: #ff0000;
+  border-radius: 50%;
+  top: -5px;
+  right: -5px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
+}
+/* Add these styles at the end of your existing Navbar.css */
+
+/* Search Bar */
+.navbar-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.navbar-search input {
+  padding: 8px 35px 8px 15px;
+  border: 1px solid #c9c9c9;
+  border-radius: 25px;
+  outline: none;
+  font-size: 14px;
+  width: 200px;
+  transition: all 0.3s ease;
+}
+
+.navbar-search input:focus {
+  border-color: #018790;
+  box-shadow: 0 0 0 3px rgba(1, 135, 144, 0.1);
+}
+
+.navbar-search i {
+  position: absolute;
+  right: 12px;
+  color: #676767;
+  font-size: 16px;
+  pointer-events: none;
+}
+
+@media (max-width: 900px) {
+  .navbar-search input {
+    width: 150px;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar-search {
+    display: none;
+  }
+}

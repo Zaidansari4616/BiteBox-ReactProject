@@ -14,7 +14,7 @@ function App() {
 
   return (
     <>
-      {showLogin ? <LoginPopUp setShowLogin={setShowLogin} /> : <></>}
+     {showLogin && <LoginPopUp setShowLogin={setShowLogin} />}
       <div className="app">
         <Navbar setShowLogin={setShowLogin} />
         <Routes>

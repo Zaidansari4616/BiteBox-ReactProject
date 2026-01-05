@@ -1,77 +1,41 @@
-.login-popup{
-    position: absolute;
-    z-index: 1;
-    width: 100%;
-    height: 100%;
-    background-color: #00000090;
-    display: grid;
+/* Close icon styling */
+.login-popup-title i {
+  font-size: 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #676767;
 }
 
-.login-popup-container{
-    place-self: center;
-    width: max(23vw,330px);
-    background-color: white;
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
-    padding: 25px 30px;
-    border-radius: 10px;
-    font-size: 14px;
-    animation: fadeIn 0.5s;
+.login-popup-title i:hover {
+  color: #ff0000;
+  transform: scale(1.1);
 }
 
-.login-popup-title{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: black;
+/* Animation */
+.login-popup-container {
+  animation: slideInDown 0.4s ease-out;
 }
 
-.login-popup-title img{
-    width: 16px;
-    cursor: pointer;
+@keyframes slideInDown {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
-.login-popup-inputs{
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+/* Input focus effect */
+.login-popup-inputs input:focus {
+  border-color: #018790;
+  box-shadow: 0 0 0 3px rgba(1, 135, 144, 0.1);
 }
 
-.login-popup-inputs input{
-    outline: none;
-    border: 1px solid #c9c9c9;
-    padding: 10px;
-    border-radius: 15px;
-}
-
-.login-popup-container button{
-    border: none;
-    padding: 10px;
-    border-radius: 5px;
-    color: white;
-    background-color: #018790;
-    font-size: 15px;
-    cursor: pointer;
-}
-
-.login-popup-condition{
-    display: flex;
-    align-items: start;
-    gap: 8px;
-    margin-top: -15px;
-}
-
-.login-popup-condition input{
-    margin-top: 5px;
-}
-
-.login-popup p span{
-    color: #018790;
-    font-weight: 500;
-    cursor: pointer;
-}
-
-.error{
-    color: red;
+/* Button hover */
+.login-popup-container button:hover {
+  background-color: #016770;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(1, 135, 144, 0.3);
 }

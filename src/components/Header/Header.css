@@ -49,3 +49,23 @@
         padding: 2vw 4vw;
     }
 }
+.header-button {
+  background-color: #018790;
+  color: white;
+  padding: 12px 30px;
+  border-radius: 50px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  text-decoration: none;
+  display: inline-block;
+  margin-top: 10px;
+}
+
+.header-button:hover {
+  background-color: #016770;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(1, 135, 144, 0.4);
+}
